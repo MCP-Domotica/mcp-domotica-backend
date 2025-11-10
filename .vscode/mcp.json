@@ -1,0 +1,21 @@
+{
+	"servers": {
+		"mcp_rooms": {
+			"type": "stdio",
+			"command": "uv",
+			"args": [
+				"run",
+				"servers/mcp_rooms.py"
+			]
+		},
+		"mcp_devices": {
+			"type": "stdio",
+			"command": "uv",
+			"args": [
+				"run",
+				"servers/mcp_devices.py"
+			]
+		}
+	},
+	"inputs": []
+}

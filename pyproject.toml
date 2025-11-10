@@ -1,0 +1,16 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dotenv>=0.9.9",
+    "fastapi>=0.121.0",
+    "httpx>=0.28.1",
+    "langchain>=1.0.5",
+    "langchain-mcp-adapters>=0.1.12",
+    "langchain-ollama>=1.0.0",
+    "mcp[cli]>=1.21.0",
+    "uvicorn>=0.38.0",
+]
