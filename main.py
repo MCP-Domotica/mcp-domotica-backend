@@ -7,7 +7,14 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain.agents import create_agent
 from langchain_ollama import ChatOllama
 
-app = FastAPI(title="Domótica MCP API")
+async def lifespan(app: FastAPI):
+    """Gestiona el ciclo de vida de la aplicación."""
+    global tools, agent
+    tools = await client.get_tools()
+    agent = create_agent(model, tools)
+    yield
+
+app = FastAPI(title="Domótica MCP API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,7 +36,7 @@ client = MultiServerMCPClient(
             "command": "uv",
             "args": [
                 "run",
-                "C:\\Users\\IPF-2025\\Desktop\\tp-domotica\\backend\\servers\\mcp_rooms.py"
+                "./servers/mcp_rooms.py"
             ]
         },
         "mcp_devices": {
@@ -37,7 +44,7 @@ client = MultiServerMCPClient(
             "command": "uv",
             "args": [
                 "run",
-                "C:\\Users\\IPF-2025\\Desktop\\tp-domotica\\backend\\servers\\mcp_devices.py"
+                "./servers/mcp_devices.py"
             ]
         }
     }
@@ -52,13 +59,13 @@ class ChatResponse(BaseModel):
     response: str
 
 # ========== ENDPOINTS DE CHAT ==========
-
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """Endpoint para enviar mensajes al agente de domótica."""
     try:
-        tools = await client.get_tools()
-        agent = create_agent(model, tools)
+        # Verificar que el sistema esté inicializado
+        if agent is None or tools is None:
+            raise HTTPException(status_code=503, detail="Sistema no inicializado")
         
         response_text = ""
         tools_used = []

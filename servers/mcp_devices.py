@@ -452,6 +452,12 @@ def ajustar_ventilador(device_id: str, speed: int) -> dict:
     if device.type != "fan":
         raise ValueError(f"Dispositivo '{device_id}' no es un ventilador")
     
+    # Manejar caso donde el estado no es un entero válido
+    # (por ejemplo, si llega un diccionario vacío por error)
+    if not isinstance(device.state, int):
+        # Establecer estado por defecto antes de actualizar
+        storage.update_device(device_id, state=storage.DEFAULT_FAN_SPEED)
+    
     return storage.update_device(device_id, state=speed)
 
 @mcp.tool()
